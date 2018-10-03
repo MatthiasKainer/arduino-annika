@@ -25,7 +25,7 @@ class Sensor
         // Measure the response from the HC-SR04 Echo Pin
         // note that this is a blocking operation, so let's keep it short
         // a timeout of 10000 (10ms) is about 1 1/2 meters
-        unsigned long duration = pulseIn(echoPin, HIGH, 10000);
+        unsigned long duration = pulseIn(echoPin, HIGH, MAX_DISTANCE * 6.66);
 
         // Determine distance from duration
         // Use 343 metres per second as speed of sound
@@ -34,7 +34,7 @@ class Sensor
     }
 
   private:
-    static const int MAX_DISTANCE = 500; // MAX = 500 CM
+    static const int MAX_DISTANCE = 1500; // MAX = 1500 CM
     unsigned int trigPin;
     unsigned int echoPin;
 };
