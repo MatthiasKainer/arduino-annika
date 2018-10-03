@@ -21,6 +21,7 @@ void setup()
     Serial.begin(9600);
     drive.setup();
     shock.setup();
+    sensor.setup();
     Serial.println("Hello I am Annika. I will search you. And then run away.");
     Serial.println(":)");
 }
