@@ -1,6 +1,7 @@
 #include "core/sensor.cpp"
 #include "core/converter.cpp"
 #include "core/drive.cpp"
+#include "core/shock.cpp"
 
 unsigned long moveUntil = 0;
 Direction toMove;
@@ -13,21 +14,39 @@ const unsigned char  BREAK_A = 9;
 const unsigned char  BREAK_B = 8;
 const Sensor sensor(5, 6);
 const Drive drive({ MOTOR_A, DIR_A, BREAK_A }, {MOTOR_B, DIR_B, BREAK_B});
+const Shock shock(4);
 
 void setup()
 {
     Serial.begin(9600);
     drive.setup();
+    shock.setup();
     Serial.println("Hello I am Annika. I will search you. And then run away.");
     Serial.println(":)");
+}
+
+void actRandomly() {
+    moveUntil = millis() + random(50, 300);
+    toMove = random(0, 2) > 0 ? LEFT : RIGHT;
+}
+
+void logTimeElapsed(String message) {
+    Serial.print(message + ": ");
+    Serial.println(millis());
 }
 
 void loop()
 {
     // get time in ms since last run
     unsigned long now = millis();
-    Serial.print("start loop: ");
-    Serial.println(millis());
+    logTimeElapsed("start loop");
+
+    if (shock.detect()) {
+        actRandomly();
+        shock.resolve();
+    }
+    logTimeElapsed("after shock detections");
+
     if (now < moveUntil)
     {
         switch (toMove)
@@ -45,14 +64,10 @@ void loop()
 
         return;
     }
-        
-    Serial.print("after repeat: ");
-    Serial.println(millis());
+    logTimeElapsed("after repeat");
 
     Range range = convert(sensor.readDistance());
-
-    Serial.print("after read distance: ");
-    Serial.println(millis());
+    logTimeElapsed("after read distance");
 
     switch (range)
     {
@@ -63,11 +78,9 @@ void loop()
         drive.slow();
         break;
     case ERROR:
-        moveUntil = now + random(50, 300);
-        toMove = random(0, 2) > 0 ? LEFT : RIGHT;
+        actRandomly();
         break;
     }
 
-    Serial.print("end loop: ");
-    Serial.println(millis());
+    logTimeElapsed("end loop");
 }
