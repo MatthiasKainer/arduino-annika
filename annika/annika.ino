@@ -12,9 +12,9 @@ const unsigned char  DIR_A = 12;
 const unsigned char  DIR_B = 13;
 const unsigned char  BREAK_A = 9;
 const unsigned char  BREAK_B = 8;
-const SonicSensor sonicSensor(5, 6);
-const IRSensor ir(11, 12, 13);
-const Drive drive({ MOTOR_A, DIR_A, BREAK_A }, {MOTOR_B, DIR_B, BREAK_B});
+SonicSensor sonicSensor(5, 6);
+IRSensor ir(2);
+Drive drive({ MOTOR_A, DIR_A, BREAK_A }, {MOTOR_B, DIR_B, BREAK_B});
 
 void setup()
 {
@@ -27,7 +27,7 @@ void setup()
 }
 
 void actRandomly() {
-    moveUntil = millis() + random(50, 300);
+    moveUntil = millis() + random(50, 200);
     toMove = random(0, 2) > 0 ? LEFT : RIGHT;
 }
 
@@ -62,8 +62,8 @@ void loop()
     logTimeElapsed("after repeat");
 
     if (ir.collision()) {
-        actRandomly();
         ir.resolve();
+        actRandomly();
         return;
     }
     
@@ -84,8 +84,8 @@ void loop()
     }
 
     if (ir.collision()) {
-        actRandomly();
         ir.resolve();
+        actRandomly();
     }
     logTimeElapsed("end loop");
 }

@@ -3,16 +3,14 @@
 
 class IRSensor {
     public:
-        IRSensor(unsigned char out, unsigned char vcc) : 
-            outPin(out), vccPin(vcc) {
+        IRSensor(unsigned char out) : 
+            outPin(out) {
         }
 
         void setup() {
-            pinMode(this->outPin, OUTPUT);
-            pinMode(this->vccPin, INPUT);
-            digitalWrite(this->vccPin, HIGH);
+            pinMode(this->outPin, INPUT);
         }
-        boolean detect() {
+        boolean collision() {
             if (!this->alert) {
                 this->alert = digitalRead(this->outPin) == LOW;
             }
@@ -24,8 +22,6 @@ class IRSensor {
         }
     private:
         boolean alert;
-        unsigned char vccPin;
-        unsigned char gndPin;
         unsigned char outPin;
 };
 
