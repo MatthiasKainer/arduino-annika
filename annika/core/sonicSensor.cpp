@@ -1,10 +1,10 @@
-#ifndef __SENSOR_CPP__
-#define __SENSOR_CPP__
+#ifndef __SONIC_SENSOR_CPP__
+#define __SONIC_SENSOR_CPP__
 
-class Sensor
+class SonicSensor
 {
   public:
-    Sensor(int trigger_pin, int echo_pin)
+    SonicSensor(int trigger_pin, int echo_pin)
         : trigPin(trigger_pin), echoPin(echo_pin)
     {
     }

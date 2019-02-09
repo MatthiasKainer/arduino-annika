@@ -1,7 +1,7 @@
-#include "core/sensor.cpp"
+#include "core/sonicSensor.cpp"
 #include "core/converter.cpp"
 #include "core/drive.cpp"
-#include "core/shock.cpp"
+#include "core/irSensor.cpp"
 
 unsigned long moveUntil = 0;
 Direction toMove;
@@ -12,16 +12,16 @@ const unsigned char  DIR_A = 12;
 const unsigned char  DIR_B = 13;
 const unsigned char  BREAK_A = 9;
 const unsigned char  BREAK_B = 8;
-const Sensor sensor(5, 6);
+const SonicSensor sonicSensor(5, 6);
+const IRSensor ir(11, 12, 13);
 const Drive drive({ MOTOR_A, DIR_A, BREAK_A }, {MOTOR_B, DIR_B, BREAK_B});
-const Shock shock(4);
 
 void setup()
 {
     Serial.begin(9600);
     drive.setup();
-    shock.setup();
-    sensor.setup();
+    ir.setup();
+    sonicSensor.setup();
     Serial.println("Hello I am Annika. I will search you. And then run away.");
     Serial.println(":)");
 }
@@ -42,12 +42,6 @@ void loop()
     unsigned long now = millis();
     logTimeElapsed("start loop");
 
-    if (shock.detect()) {
-        actRandomly();
-        shock.resolve();
-    }
-    logTimeElapsed("after shock detections");
-
     if (now < moveUntil)
     {
         switch (toMove)
@@ -67,7 +61,13 @@ void loop()
     }
     logTimeElapsed("after repeat");
 
-    Range range = convert(sensor.readDistance());
+    if (ir.collision()) {
+        actRandomly();
+        ir.resolve();
+        return;
+    }
+    
+    Range range = convert(sonicSensor.readDistance());
     logTimeElapsed("after read distance");
 
     switch (range)
@@ -83,5 +83,9 @@ void loop()
         break;
     }
 
+    if (ir.collision()) {
+        actRandomly();
+        ir.resolve();
+    }
     logTimeElapsed("end loop");
 }
